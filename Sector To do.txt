@@ -1,0 +1,46 @@
+- Launch game
+- Intro text stating Minijam brief
+- Start Game
+
+- Enemy AI
+	- Wakeup on entering sector / Sleep on exiting sector
+	- Random Patrolling / Aggro radius
+	- Attacking player
+
+- UI
+	- Updating all text fields, irrelevant of current splitscreen
+	- Updating SECTOR text on entering new sector
+	- Updating STATUS text on taking / causing damage
+
+- Player
+
+	- Fix Y axis bug
+	- Force game to 1 camera when a player is destroyed
+	- Fix Player Marker in splitscreen
+	- keyboard input for left and right player (WADS and Numpad)
+	- toggle primary and secondary weapons
+
+- Mission Handler
+
+	- Randomise Type
+	- Randomise Sector
+	- Randomise Reward
+	- Completion of Mission
+
+- Game Controller
+
+	- Intro text
+	- Pause Menu
+		- Input Mapper
+		- Quit
+	- Gameover
+	- Game Resolution
+
+- Environment
+
+	- Skinny font
+	- Parallaxing Starfields
+	- x 10 Asteroid Varieties
+	- x 10 Junk Varieties
+	- x 5 Enemy Varieties
+	- x 3 Boss Varieties
