@@ -36,6 +36,15 @@
 	- Gameover
 	- Game Resolution
 
+- Sound Controller
+
+	- Laser Weapon
+	- Ion Weapon
+	- Explosion Small
+	- Explosion Medium
+	- Explosion Large
+	- Text
+
 - Environment
 
 	- Skinny font

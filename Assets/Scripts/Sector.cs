@@ -5,13 +5,16 @@ using UnityEngine.UI;
 
 public class Sector : MonoBehaviour
 {
-    public string SectorName;
+    public string X;
+    public string Y;
     public List<GameObject> EnemyList;
     public List<GameObject> ObjectList;
 
     private float ThreatLevel;
     private float ObjectCount;
     private float EnemyCount;
+
+    public bool IsAwake;
 
     private void Start()
     {
@@ -38,7 +41,7 @@ public class Sector : MonoBehaviour
         //for each objectcount, instantiate with origin +/ -50 of the sectors centre
         //Debug.Log("Spawning " + ObjectCount + " objects in " + SectorName);
 
-        for (int i = 0; i < EnemyCount; i++)
+        for (int i = 0; i < ObjectCount; i++)
         {
             GameObject Object = ObjectList[Random.Range(0, ObjectList.Count)];
             Vector3 ObjectPos = new Vector3(transform.position.x + Random.Range(-50, 50), transform.position.y, transform.position.z + Random.Range(-50, 50));
@@ -53,7 +56,11 @@ public class Sector : MonoBehaviour
         {
             GameObject Enemy = EnemyList[Random.Range(0, EnemyList.Count)];
             Vector3 EnemyPos = new Vector3(transform.position.x + Random.Range(-50, 50), transform.position.y, transform.position.z + Random.Range(-50, 50));
-            Instantiate(Enemy, EnemyPos, Quaternion.identity);
+            GameObject NewEnemy = Instantiate(Enemy, EnemyPos, Quaternion.identity);
+            NewEnemy.transform.parent = transform;
+
+            Transform EnemySprite = NewEnemy.transform.Find("EnemySprite");
+            EnemySprite.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
         }
     }
 

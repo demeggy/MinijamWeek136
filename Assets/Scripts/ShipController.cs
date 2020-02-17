@@ -35,12 +35,11 @@ public class ShipController : MonoBehaviour
     public GameObject Slipstream;
     private bool InFormation;
     private float FormationTimer;
-
-    //UI
-    private string CurSector;
+    private bool BothAlive;
 
     public Text Status;
-    public Text Sector;
+    public Text SectorX;
+    public Text SectorY;
     public GameObject SharedUI;
     public GameObject SplitUI;
     private GameObject OtherPlayerMarker;
@@ -49,35 +48,43 @@ public class ShipController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         OtherPlayerMarker = transform.Find("OtherPlayer").gameObject;
+        BothAlive = true;
     }
 
     private void FixedUpdate()
     {
-        //Check for splitscreen
-        FollowCam();
+        //Check if both players are alive
+        if(BothAlive == true)
+        {
+            //Check for splitscreen
+            FollowCam();
+
+            //Checks for Formation bonus
+            FormationBonus();
+
+            //Point Other Player Marker at other player if active
+            if (OtherPlayerMarker.activeSelf)
+            {
+                //Rotate towards other player
+                //Vector3 dirToTarget = OtherPlayer.transform.position - transform.position;
+                //Vector3 forward = Vector3.up;
+                //float rotation = Vector3.SignedAngle(dirToTarget, forward, Vector3.forward);
+                //OtherPlayerMarker.transform.rotation = Quaternion.Euler(0, 0, rotation);
+                //OtherPlayerMarker.transform.rotation = Quaternion.Euler(Vector3.RotateTowards(transform.position, OtherPlayer.transform.position,360,100);
+            }
+        }
+        else
+        {
+            //Force solo camera only - dont do formations or markers
+            FollowCam();
+        }
 
         //Create slipstream
         CreateSlipstream();
 
-        //Checks for Formation bonus
-        FormationBonus();
-
-        //Point Other Player Marker at other player if active
-        if (OtherPlayerMarker.activeSelf)
-        {
-            //Rotate towards other player
-            //Vector3 dirToTarget = OtherPlayer.transform.position - transform.position;
-            //Vector3 forward = Vector3.up;
-            //float rotation = Vector3.SignedAngle(dirToTarget, forward, Vector3.forward);
-            //OtherPlayerMarker.transform.rotation = Quaternion.Euler(0, 0, rotation);
-            //OtherPlayerMarker.transform.rotation = Quaternion.Euler(Vector3.RotateTowards(transform.position, OtherPlayer.transform.position,360,100);
-        }
-
-
         //Player 1 Input
         if (inputType == Input_Type.Left)
         {
-
             //Movement
             float thrustInput;
 
@@ -139,6 +146,12 @@ public class ShipController : MonoBehaviour
                 }
             }
         }
+
+        //if (OtherPlayer.GetComponent<ShipController>().hp <= 0 && BothAlive == true)
+        //{
+        //    BothAlive = false;
+        //    Destroy(OtherPlayer);
+        //}
     }
 
     //If players are flying next to each either for more than X seconds, they're in formation
@@ -148,7 +161,6 @@ public class ShipController : MonoBehaviour
         if (dist < 3.5f)
         {
             FormationTimer += Time.deltaTime;
-            Debug.Log(FormationTimer);
         }
         else
         {
@@ -192,6 +204,7 @@ public class ShipController : MonoBehaviour
         Destroy(Slipstream);
     }
     
+    //Fires weapon
     public void FireWeapon()
     {
         GameObject projectile = Instantiate(Slot1, transform.position, transform.rotation);
@@ -199,53 +212,59 @@ public class ShipController : MonoBehaviour
         Slot1Timer = Time.time + Slot1Cool;
     }
 
+    //Camera controller
     public void FollowCam()
     {
-        ShipCam.transform.position = new Vector3(transform.position.x, 21, transform.position.z);
-        //Camera MainCamera = Camera.main;
-
-        float dist = Vector3.Distance(transform.position, OtherPlayer.transform.position);
-        if (dist < 25)
+        if(BothAlive == true)
         {
-            //Toggle the UI between Shared and Split
-            SharedUI.SetActive(true);
-            SplitUI.SetActive(false);
+            ShipCam.transform.position = new Vector3(transform.position.x, 21, transform.position.z);
+            //Camera MainCamera = Camera.main;
 
-            //Toggle the Other Player UI Marker
-            OtherPlayerMarker.SetActive(false);
+            float dist = Vector3.Distance(transform.position, OtherPlayer.transform.position);
+            if (dist < 25)
+            {
+                //Toggle the UI between Shared and Split
+                SharedUI.SetActive(true);
+                SplitUI.SetActive(false);
 
-            //Merge camera
-            Vector3 CameraMidpoint = (transform.position + OtherPlayer.transform.position) * 0.5f;
-            SharedCam.transform.position = new Vector3(CameraMidpoint.x,21,CameraMidpoint.z);
-            SharedCam.enabled = true;
-            ShipCam.enabled = false;
+                //Toggle the Other Player UI Marker
+                OtherPlayerMarker.SetActive(false);
+
+                //Merge camera
+                Vector3 CameraMidpoint = (transform.position + OtherPlayer.transform.position) * 0.5f;
+                SharedCam.transform.position = new Vector3(CameraMidpoint.x, 21, CameraMidpoint.z);
+                SharedCam.enabled = true;
+                ShipCam.enabled = false;
+            }
+            else
+            {
+                //Toggle the UI between Shared and Split
+                SharedUI.SetActive(false);
+                SplitUI.SetActive(true);
+
+                //Toggle the Other Player UI Marker
+                OtherPlayerMarker.SetActive(true);
+
+                //Split camera
+                ShipCam.enabled = true;
+                SharedCam.enabled = false;
+                ShipCam.transform.position = new Vector3(transform.position.x, 21, transform.position.z);
+            }
         }
         else
         {
-            //Toggle the UI between Shared and Split
-            SharedUI.SetActive(false);
-            SplitUI.SetActive(true);
-
-            //Toggle the Other Player UI Marker
-            OtherPlayerMarker.SetActive(true);
-
-            //Split camera
-            ShipCam.enabled = true;
-            SharedCam.enabled = false;            
-            ShipCam.transform.position = new Vector3(transform.position.x, 21, transform.position.z);
+            SharedCam.enabled = true;
+            ShipCam.enabled = false;
+            SharedCam.transform.position = transform.position;
         }
-    }
-
-    public void UpdateUI()
-    {
-        Sector.text = CurSector;
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.tag == "Sector")
         {
-            CurSector = other.gameObject.GetComponent<Sector>().SectorName;
+            SectorX.text = other.gameObject.GetComponent<Sector>().X;
+            SectorY.text = other.gameObject.GetComponent<Sector>().Y;
         }
     }
 }

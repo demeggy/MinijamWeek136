@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6849296593461596057}
   - component: {fileID: 6308538559451083754}
   m_Layer: 0
-  m_Name: EnemyFighter (1)
+  m_Name: EnemySprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -137,6 +137,10 @@ MonoBehaviour:
     type: 3}
   Waypoint: {fileID: 3220562734745574875, guid: 5add130f46c5eae4e909f858f6cb2728,
     type: 3}
+  Slot1: {fileID: 6383659626473001552, guid: 144d299b77039fb4891764f62663f327, type: 3}
+  IsAttacking: 0
+  AttackRange: 7.5
+  Slot1Cool: 1
 --- !u!195 &1437556310
 NavMeshAgent:
   m_ObjectHideFlags: 0

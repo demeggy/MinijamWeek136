@@ -9,6 +9,8 @@ TagManager:
   - UI Shared
   - UI Split
   - Sector
+  - EnemyProjectile
+  - MissionController
   layers:
   - Default
   - TransparentFX
